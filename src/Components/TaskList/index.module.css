@@ -1,0 +1,33 @@
+.root {
+  height: 50vh;
+  /* background-color: white; */
+  width: 70%;
+  min-width: 300px;
+  margin-top: 10%;
+}
+.tasks {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 80%;
+}
+.controls {
+  display: flex;
+  position: relative;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 5%;
+  padding: 5px;
+  /* border-bottom: 3px solid #264653; */
+}
+.controls::after {
+  position: absolute;
+  content: "";
+  width: 50%;
+  bottom: 0;
+  left: 0;
+  border-bottom: 3px solid #264653;
+}
+.controls * {
+  padding: 5px;
+  cursor: pointer;
+}

@@ -14,5 +14,30 @@ module.exports = {
       resolve: `gatsby-plugin-create-client-paths`,
       options: { prefixes: [`/app/*`] },
     },
+    {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+        rule: {
+          include: /Assets/,
+        },
+      },
+    },
+    {
+      resolve: `gatsby-plugin-webfonts`,
+      options: {
+        fonts: {
+          google: [
+            {
+              family: `Josefin Sans`,
+              variants: [`400`, `700`],
+            },
+            {
+              family: `Lora`,
+              variants: [`400`, `500`],
+            },
+          ],
+        },
+      },
+    },
   ],
 }

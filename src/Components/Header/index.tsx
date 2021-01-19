@@ -1,15 +1,18 @@
-import React from "react"
+import React, { useEffect } from "react"
 import classes from "./index.module.css"
-const Index = () => {
+interface HeaderProps {
+  text: string
+}
+const Index: React.FC<HeaderProps> = ({ text }) => {
   return (
     <div className={classes.root}>
-      <div className={classes.logo}>Todooo</div>
-      <div
+      <h3 className={classes.logo}>Todo App</h3>
+      <h5
         className={classes.register}
         onClick={() => window.netlifyIdentity.open()}
       >
-        Login
-      </div>
+        {text}
+      </h5>
     </div>
   )
 }
