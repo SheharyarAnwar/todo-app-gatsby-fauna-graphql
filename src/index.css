@@ -9,6 +9,7 @@
 }
 body {
   background-color: #f2f4f6;
+  transition: all 0.4s linear;
 }
 h1,
 h2,
@@ -42,4 +43,22 @@ p {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(82, 105, 89);
+}
+
+::-webkit-input-placeholder {
+  text-align: center;
+}
+
+:-moz-placeholder {
+  /* Firefox 18- */
+  text-align: center;
+}
+
+::-moz-placeholder {
+  /* Firefox 19+ */
+  text-align: center;
+}
+
+:-ms-input-placeholder {
+  text-align: center;
 }

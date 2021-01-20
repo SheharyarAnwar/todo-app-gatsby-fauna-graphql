@@ -7,7 +7,6 @@ export interface TaskProps {
 const Index: React.FC<TaskProps> = ({ title }) => {
   const beforeRef = React.createRef<HTMLSpanElement>()
   const afterRef = React.createRef<HTMLSpanElement>()
-
   const onCheckClicked = () => {
     runCheckedAnimation()
   }
