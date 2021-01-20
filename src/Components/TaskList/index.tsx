@@ -2,21 +2,42 @@ import React, { useEffect, useState } from "react"
 import Task from "../Task"
 import classes from "./index.module.css"
 import Add from "../../Assets/Add.svg"
-import { useDispatch } from "react-redux"
-import { getTodos } from "../../Store/RootReducer"
+
 declare global {
   interface KeyframeAnimationOptions {
     pseudoElement?: string
   }
 }
-const Index = () => {
+export interface Task {
+  userId: string
+  docId: string
+  title: string
+  isCompleted: boolean
+  onCompleted?: (docId: string) => void
+}
+export interface TaskListProps {
+  data: Task[]
+  onTaskAddedHandler: (title: string) => void
+  onTaskCompleteHandler: (docId: string) => void
+}
+const Index: React.FC<TaskListProps> = ({
+  data,
+  onTaskAddedHandler,
+  onTaskCompleteHandler,
+}) => {
   const underlineRef = React.createRef<HTMLDivElement>()
   const wrapperRef = React.createRef<HTMLDivElement>()
   const [modalOpen, setModalOpen] = useState<boolean>(false)
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(getTodos({ userId: "123456" }))
-  }, [])
+  const [title, setTitle] = useState<string>("")
+  const [areCompleted, setAreCompleted] = useState<boolean>(false)
+  const onCompleted = (docId: string) => {
+    onTaskCompleteHandler(docId)
+  }
+  const tasks = data
+    .filter(val => {
+      return val.isCompleted === areCompleted
+    })
+    .map(val => <Task key={val.docId} {...val} onCompleted={onCompleted} />)
   const runUnderlineAnimation = (translation: number) => {
     underlineRef.current.animate(
       [{ transform: `translateX(${translation}%)` }],
@@ -30,10 +51,13 @@ const Index = () => {
   }
   const onInProgressClicked = () => {
     runUnderlineAnimation(0)
+    setAreCompleted(false)
   }
   const onCompletedClicked = () => {
     runUnderlineAnimation(100)
+    setAreCompleted(true)
   }
+
   return (
     <>
       <div className={classes.root}>
@@ -41,19 +65,7 @@ const Index = () => {
           <h4 onClick={onInProgressClicked}>In Progress</h4>
           <h4 onClick={onCompletedClicked}>Completed</h4>
         </div>
-        <div className={classes.tasks}>
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-          <Task title="Do something noice" />
-        </div>
+        <div className={classes.tasks}>{tasks}</div>
         <div className={classes.add} onClick={() => setModalOpen(true)}>
           <Add width={15} />
         </div>
@@ -68,8 +80,16 @@ const Index = () => {
       >
         <div className={classes.modal}>
           <h4>Tilte</h4>
-          <input placeholder="Click To Add Text" type="text"></input>
-          <button className={classes.add}>
+          <input
+            placeholder="Click To Add Text"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            type="text"
+          ></input>
+          <button
+            className={classes.add}
+            onClick={() => onTaskAddedHandler(title)}
+          >
             <Add width={15} />
           </button>
         </div>

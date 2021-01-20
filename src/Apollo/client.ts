@@ -3,7 +3,7 @@ import { setContext } from "@apollo/client/link/context"
 
 export const createApolloClientWithTokenContext = token => {
   const httpLink = createHttpLink({
-    uri: "/graphql",
+    uri: "/.netlify/functions/create",
   })
   const authLink = setContext((_, { headers }) => {
     return {

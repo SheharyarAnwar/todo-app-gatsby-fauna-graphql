@@ -7,43 +7,81 @@ const typeDefs = gql`
     userId: String!
     title: String!
     isCompleted: Boolean!
-    ref: String!
+    docId: String!
   }
   type Query {
-    todos(userId: ID!): [Todo]!
+    todos: [Todo]!
   }
   type Mutation {
-    addTodo(title: String!, userId: ID!): Todo!
-    markAsCompleted(ref: ID!): Todo!
+    addTodo(title: String!): Todo!
+    markAsCompleted(docId: ID!): Todo!
   }
 `
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
     todos: async (parent, args, context, info) => {
-      console.log(context)
-      const results = await client.query(
-        q.Map(
-          q.Paginate(q.Match(q.Index("todos-search-by-userId"), args.userId)),
-          q.Lambda("todo", q.Get(q.Var("todo")))
+      try {
+        const userId = context?.user?.sub
+        const results = await client.query(
+          q.Map(
+            q.Paginate(q.Match(q.Index("todos-search-by-userId"), userId)),
+            q.Lambda("todo", q.Get(q.Var("todo")))
+          )
         )
-      )
-      const faunaResults = results.data.map(val => {
-        return { ...val.data, ref: val.ref.id }
-      })
-      return faunaResults
+        const faunaResults = results.data.map(val => {
+          return { ...val.data, docId: val.ref.id }
+        })
+        return faunaResults
+      } catch (err) {
+        throw new Error("Couldnt Get Tasks")
+      }
     },
   },
   Mutation: {
-    addTodo: async () => {},
-    markAsCompleted: () => {},
+    addTodo: async (parent, args, context) => {
+      try {
+        const userId = context?.user?.sub
+        if (!userId) {
+          throw new Error("User Not Aunthenticated")
+        }
+        const results = await client.query(
+          q.Create(q.Collection("todos"), {
+            data: {
+              userId,
+              isCompleted: false,
+              title: args.title,
+            },
+          })
+        )
+
+        return { ...results.data, docId: results.ref.id }
+      } catch (err) {
+        console.log(err)
+        throw new Error("Couldnt create Task")
+      }
+    },
+    markAsCompleted: async (parent, args, context) => {
+      try {
+        const results = await client.query(
+          q.Update(q.Ref(q.Collection("todos"), args.docId), {
+            data: {
+              isCompleted: true,
+            },
+          })
+        )
+        return { ...results.data, docId: results.ref.id }
+      } catch (err) {
+        throw new Error("Couldnt update Task")
+      }
+    },
   },
 }
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ context }) => context,
+  context: ({ context }) => context?.clientContext,
 })
 
 exports.handler = server.createHandler()
