@@ -2,6 +2,10 @@ import React, { useEffect, useLayoutEffect, useState } from "react"
 import netlifyIdentity from "netlify-identity-widget"
 import { NetlifyWidget } from "./Interfaces"
 import { navigate } from "gatsby"
+import { ApolloProvider } from "@apollo/client"
+import { createApolloClientWithTokenContext } from "./Apollo/client"
+import { Provider } from "react-redux"
+import store from "../src/Store/index"
 export const GlobalContext = React.createContext<GlobalContextValues | null>(
   null
 )
@@ -13,10 +17,10 @@ declare global {
 interface GlobalContextValues {
   user: netlifyIdentity.User | null
 }
+
 const Index = ({ children }) => {
   const [user, setUser] = useState<netlifyIdentity.User>(null)
   useEffect(() => {
-    console.log("Ran Global Provider")
     window.netlifyIdentity = netlifyIdentity
     netlifyIdentity.init()
     setUser(window.netlifyIdentity.currentUser())
@@ -33,9 +37,15 @@ const Index = ({ children }) => {
   }, [])
   return (
     <>
-      <GlobalContext.Provider value={{ user: user }}>
-        {children}
-      </GlobalContext.Provider>
+      <ApolloProvider
+        client={createApolloClientWithTokenContext(user?.token?.access_token)}
+      >
+        <Provider store={store}>
+          <GlobalContext.Provider value={{ user: user }}>
+            {children}
+          </GlobalContext.Provider>
+        </Provider>
+      </ApolloProvider>
     </>
   )
 }

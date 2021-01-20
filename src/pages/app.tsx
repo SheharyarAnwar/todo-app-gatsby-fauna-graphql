@@ -4,7 +4,7 @@ import Dashboard from "../views/Dashboard"
 import ProtectedRouteWrapper from "../Components/ProtectedRouteWrapper"
 import { navigate } from "gatsby"
 const App = () => {
-  window && navigate("/app/dashboard")
+  typeof window !== "undefined" && navigate("/app/dashboard")
   return (
     <Router basepath="/app">
       <ProtectedRouteWrapper path="/dashboard" component={<Dashboard />} />

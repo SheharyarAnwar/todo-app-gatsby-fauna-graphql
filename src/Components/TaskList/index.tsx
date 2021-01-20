@@ -1,7 +1,9 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Task from "../Task"
 import classes from "./index.module.css"
 import Add from "../../Assets/Add.svg"
+import { useDispatch } from "react-redux"
+import { getTodos } from "../../Store/RootReducer"
 declare global {
   interface KeyframeAnimationOptions {
     pseudoElement?: string
@@ -11,7 +13,10 @@ const Index = () => {
   const underlineRef = React.createRef<HTMLDivElement>()
   const wrapperRef = React.createRef<HTMLDivElement>()
   const [modalOpen, setModalOpen] = useState<boolean>(false)
-
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getTodos({ userId: "123456" }))
+  }, [])
   const runUnderlineAnimation = (translation: number) => {
     underlineRef.current.animate(
       [{ transform: `translateX(${translation}%)` }],

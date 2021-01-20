@@ -6,7 +6,7 @@ import { navigate } from "gatsby"
 
 export default function Home() {
   const context = useContext(GlobalContext)
-  if (context.user) {
+  if (context?.user) {
     navigate("/app/dashboard")
   }
   return (
