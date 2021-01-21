@@ -65,7 +65,15 @@ const Index: React.FC<TaskListProps> = ({
           <h4 onClick={onInProgressClicked}>In Progress</h4>
           <h4 onClick={onCompletedClicked}>Completed</h4>
         </div>
-        <div className={classes.tasks}>{tasks}</div>
+        <div className={classes.tasks}>
+          {tasks && tasks.length <= 0 ? (
+            <p style={{ marginTop: "10%", textAlign: "center" }}>
+              No Tasks To Show
+            </p>
+          ) : (
+            tasks
+          )}
+        </div>
         <div className={classes.add} onClick={() => setModalOpen(true)}>
           <Add width={15} />
         </div>

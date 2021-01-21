@@ -22,7 +22,7 @@ const resolvers = {
   Query: {
     todos: async (parent, args, context, info) => {
       try {
-        const userId = context?.user?.sub
+        const userId = context && context.user.sub
         console.log("Secret----", process.env.FAUNADB_SECRET)
         const results = await client.query(
           q.Map(
@@ -43,7 +43,7 @@ const resolvers = {
   Mutation: {
     addTodo: async (parent, args, context) => {
       try {
-        const userId = context?.user?.sub
+        const userId = context && context.user.sub
         if (!userId) {
           throw new Error("User Not Aunthenticated")
         }
@@ -83,7 +83,7 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ context }) => context?.clientContext,
+  context: ({ context }) => context && context.clientContext,
 })
 
 exports.handler = server.createHandler()
