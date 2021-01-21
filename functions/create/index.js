@@ -23,6 +23,7 @@ const resolvers = {
     todos: async (parent, args, context, info) => {
       try {
         const userId = context?.user?.sub
+        console.log("Secret----", process.env.FAUNADB_SECRET)
         const results = await client.query(
           q.Map(
             q.Paginate(q.Match(q.Index("todos-search-by-userId"), userId)),
@@ -32,6 +33,7 @@ const resolvers = {
         const faunaResults = results.data.map(val => {
           return { ...val.data, docId: val.ref.id }
         })
+        // console.log(results)
         return faunaResults
       } catch (err) {
         throw new Error("Couldnt Get Tasks")

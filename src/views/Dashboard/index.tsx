@@ -50,7 +50,7 @@ const Index: React.FC<DasboardProps> = () => {
     console.log(docId)
     markComplete({ variables: { docId } })
   }
-
+  console.log(queryError, mutationError, markError)
   return (
     <>
       <Header text="Logout" />
