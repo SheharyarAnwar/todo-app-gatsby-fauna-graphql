@@ -22,8 +22,8 @@ const resolvers = {
   Query: {
     todos: async (parent, args, context, info) => {
       try {
-        const userId = context && context.user.sub
-        console.log("Secret----", process.env.FAUNADB_SECRET)
+        const userId = context && context.user && context.user.sub
+        console.log(userId)
         const results = await client.query(
           q.Map(
             q.Paginate(q.Match(q.Index("todos-search-by-userId"), userId)),
@@ -36,6 +36,7 @@ const resolvers = {
         // console.log(results)
         return faunaResults
       } catch (err) {
+        console.log(err)
         throw new Error("Couldnt Get Tasks")
       }
     },
@@ -43,7 +44,7 @@ const resolvers = {
   Mutation: {
     addTodo: async (parent, args, context) => {
       try {
-        const userId = context && context.user.sub
+        const userId = context && context.user && context.user.sub
         if (!userId) {
           throw new Error("User Not Aunthenticated")
         }
